@@ -1,4 +1,4 @@
-import { IsMongoId, IsString } from 'class-validator';
+import { IsMongoId, IsOptional, IsString } from 'class-validator';
 
 export class CreatePostDto {
   @IsString()
@@ -8,8 +8,10 @@ export class CreatePostDto {
   content: string;
 
   @IsMongoId()
-  author: string;
+  @IsOptional()
+  author?: string;
 
   @IsString()
-  hash: string;
+  @IsOptional()
+  hash?: string;
 }

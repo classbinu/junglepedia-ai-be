@@ -1,5 +1,12 @@
+import * as crypto from 'crypto';
+
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
+
 import { CreatePostDto } from './dto/create-post.dto';
-import { Injectable } from '@nestjs/common';
 import { PostsMongoRepository } from './posts.repository';
 import { UpdatePostDto } from './dto/update-post.dto';
 
@@ -7,7 +14,12 @@ import { UpdatePostDto } from './dto/update-post.dto';
 export class PostsService {
   constructor(private readonly postsRepository: PostsMongoRepository) {}
 
-  async create(createPostDto: CreatePostDto) {
+  async create(createPostDto: CreatePostDto, userId: string) {
+    createPostDto.author = userId;
+
+    const hash = crypto.createHash('sha256');
+    hash.update(createPostDto.content);
+    createPostDto.hash = hash.digest('hex');
     return await this.postsRepository.create(createPostDto);
   }
 
@@ -23,43 +35,52 @@ export class PostsService {
     return await this.postsRepository.findOneByField(field, value);
   }
 
-  async update(id: string, updatePostDto: UpdatePostDto) {
+  async update(id: string, updatePostDto: UpdatePostDto, userId: string) {
+    const post = await this.findOne(id);
+    const author = post.author.toString();
+
+    if (!post) {
+      throw new NotFoundException('Post not found');
+    }
+
+    if (userId !== author) {
+      throw new UnauthorizedException(
+        'You are not allowed to update this post',
+      );
+    }
     return await this.postsRepository.update(id, updatePostDto);
   }
 
-  async remove(id: string) {
+  async remove(id: string, userId: string) {
+    const post = await this.findOne(id);
+
+    if (!post) {
+      throw new NotFoundException('Post not found');
+    }
+
+    if (userId !== post.author.toString()) {
+      throw new UnauthorizedException(
+        'You are not allowed to delete this post',
+      );
+    }
     return await this.postsRepository.remove(id);
   }
 
-  // async addLike(id: string, userId: string) {
-  //   return await this.postsRepository.addLike(id, userId);
-  // }
-
-  // async removeLike(id: string, userId: string) {
-  //   return await this.postsRepository.removeLike(id, userId);
-  // }
-
-  // async addDislike(id: string, userId: string) {
-  //   return await this.postsRepository.addDislike(id, userId);
-  // }
-
-  // async removeDislike(id: string, userId: string) {
-  //   return await this.postsRepository.removeDislike(id, userId);
-  // }
-
-  // async checkLikeStatus(id: string, userId: string) {
-  //   return await this.postsRepository.checkLikeStatus(id, userId);
-  // }
-
-  // async checkDislikeStatus(id: string, userId: string) {
-  //   return await this.postsRepository.checkDislikeStatus(id, userId);
-  // }
-
   async toggleLike(id: string, userId: string) {
+    const post = await this.findOne(id);
+
+    if (!post) {
+      throw new NotFoundException('Post not found');
+    }
     return await this.postsRepository.toggleLike(id, userId);
   }
 
   async toggleDislike(id: string, userId: string) {
+    const post = await this.findOne(id);
+
+    if (!post) {
+      throw new NotFoundException('Post not found');
+    }
     return await this.postsRepository.toggleDislike(id, userId);
   }
 }

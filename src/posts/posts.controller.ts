@@ -8,16 +8,13 @@ import {
   Delete,
   Query,
   UseGuards,
-  UnauthorizedException,
-  NotFoundException,
   Req,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AccessTokenGuard } from 'src/auth/guards/accessToken.guard';
-import * as crypto from 'crypto';
 
 @ApiTags('Posts')
 @Controller('posts')
@@ -25,16 +22,11 @@ export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
   @UseGuards(AccessTokenGuard)
+  @ApiBearerAuth()
   @Post()
   create(@Body() createPostDto: CreatePostDto, @Req() req: any) {
     const userId = req.user['sub'];
-    createPostDto.author = userId;
-
-    const hash = crypto.createHash('sha256');
-    hash.update(createPostDto.content);
-    createPostDto.hash = hash.digest('hex');
-
-    return this.postsService.create(createPostDto);
+    return this.postsService.create(createPostDto, userId);
   }
 
   @Get()
@@ -53,6 +45,7 @@ export class PostsController {
   }
 
   @UseGuards(AccessTokenGuard)
+  @ApiBearerAuth()
   @Patch(':id')
   async update(
     @Param('id') id: string,
@@ -60,64 +53,30 @@ export class PostsController {
     @Req() req: any,
   ) {
     const userId = req.user['sub'];
-    const post = await this.postsService.findOne(id);
-    const author = post.author.toString();
-
-    if (!post) {
-      throw new NotFoundException('Post not found');
-    }
-
-    if (userId !== author) {
-      throw new UnauthorizedException(
-        'You are not allowed to update this post',
-      );
-    }
-    return this.postsService.update(id, updatePostDto);
+    return this.postsService.update(id, updatePostDto, userId);
   }
 
   @UseGuards(AccessTokenGuard)
+  @ApiBearerAuth()
   @Delete(':id')
   async remove(@Param('id') id: string, @Req() req: any) {
     const userId = req.user['sub'];
-    const post = await this.postsService.findOne(id);
-    const author = post.author.toString();
-
-    if (!post) {
-      throw new NotFoundException('Post not found');
-    }
-
-    if (userId !== author) {
-      throw new UnauthorizedException(
-        'You are not allowed to delete this post',
-      );
-    }
-
-    return this.postsService.remove(id);
+    return this.postsService.remove(id, userId);
   }
 
   @UseGuards(AccessTokenGuard)
+  @ApiBearerAuth()
   @Post(':id/like')
   async toggleLike(@Param('id') id: string, @Req() req: any) {
     const userId = req.user['sub'];
-    const post = await this.postsService.findOne(id);
-
-    if (!post) {
-      throw new NotFoundException('Post not found');
-    }
-
     return this.postsService.toggleLike(id, userId);
   }
 
   @UseGuards(AccessTokenGuard)
+  @ApiBearerAuth()
   @Post(':id/dislike')
   async toggleDislike(@Param('id') id: string, @Req() req: any) {
     const userId = req.user['sub'];
-    const post = await this.postsService.findOne(id);
-
-    if (!post) {
-      throw new NotFoundException('Post not found');
-    }
-
     return this.postsService.toggleDislike(id, userId);
   }
 }

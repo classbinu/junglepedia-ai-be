@@ -9,7 +9,7 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthDto } from './dto/auth.dto';
 import { Request } from 'express';
 import { RefreshTokenGuard } from './guards/refreshToken.guard';
@@ -31,6 +31,7 @@ export class AuthController {
   }
 
   @UseGuards(AccessTokenGuard)
+  @ApiBearerAuth()
   @Get('logout')
   async logout(@Req() req: Request) {
     const userId = req.user['sub'];
@@ -38,6 +39,7 @@ export class AuthController {
   }
 
   @UseGuards(RefreshTokenGuard)
+  @ApiBearerAuth()
   @Get('refresh')
   async refreshTokens(@Req() req: Request) {
     const userId = req.user['sub'];
@@ -46,6 +48,7 @@ export class AuthController {
   }
 
   @UseGuards(AccessTokenGuard)
+  @ApiBearerAuth()
   @Patch('password')
   async changePassword(@Body() passwordDto, @Req() req: Request) {
     return await this.authService.changePassword(req.user['sub'], passwordDto);
