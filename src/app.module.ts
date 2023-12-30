@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { PostsModule } from './posts/posts.module';
 import { UsersModule } from './users/users.module';
 
 console.log('env : ' + process.env.NODE_ENV);
@@ -21,6 +22,7 @@ console.log('env : ' + process.env.NODE_ENV);
     }),
     UsersModule,
     AuthModule,
+    PostsModule,
   ],
   controllers: [],
   providers: [],
