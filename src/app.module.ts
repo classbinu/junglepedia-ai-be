@@ -1,9 +1,9 @@
-import { ConfigModule, ConfigService } from '@nestjs/config';
-
 import { AuthModule } from './auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
 import { PostsModule } from './posts/posts.module';
+import { TypeOrmConfigService } from './typeorm.config';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 
 console.log('env : ' + process.env.NODE_ENV);
@@ -13,12 +13,8 @@ console.log('env : ' + process.env.NODE_ENV);
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    MongooseModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        uri: configService.get('DB_URI'),
-      }),
-      inject: [ConfigService],
+    TypeOrmModule.forRootAsync({
+      useClass: TypeOrmConfigService,
     }),
     UsersModule,
     AuthModule,

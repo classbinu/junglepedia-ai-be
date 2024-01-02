@@ -1,18 +1,19 @@
-import { Post, PostSchema } from './schema/post.schema';
-
 import { AuthModule } from 'src/auth/auth.module';
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
+import { Post } from './entities/post.entity';
 import { PostsController } from './posts.controller';
-import { PostsMongoRepository } from './posts.repository';
 import { PostsService } from './posts.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from 'src/users/entities/user.entity';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
+    TypeOrmModule.forFeature([Post]),
+    TypeOrmModule.forFeature([User]),
     AuthModule,
   ],
   controllers: [PostsController],
-  providers: [PostsService, PostsMongoRepository],
+  providers: [PostsService],
+  exports: [TypeOrmModule],
 })
 export class PostsModule {}

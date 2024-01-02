@@ -39,14 +39,13 @@ export class AuthService {
     }
 
     const payload = {
-      sub: user._id,
+      sub: user.id,
       email: user.email,
-      role: user.role,
     };
 
     const tokens = await this.issueTokens(payload);
     const hashedRefreshToken = await this.hashData(tokens.refreshToken);
-    await this.usersService.update(user._id.toString(), {
+    await this.usersService.update(user.id, {
       refreshToken: hashedRefreshToken,
     });
 
@@ -115,14 +114,13 @@ export class AuthService {
     }
 
     const payload = {
-      sub: user._id,
+      sub: user.id,
       email: user.email,
-      role: user.role,
     };
 
     const tokens = await this.issueTokens(payload);
     const hashedRefreshToken = await this.hashData(tokens.refreshToken);
-    await this.usersService.update(user._id.toString(), {
+    await this.usersService.update(user.id, {
       refreshToken: hashedRefreshToken,
     });
     return tokens;

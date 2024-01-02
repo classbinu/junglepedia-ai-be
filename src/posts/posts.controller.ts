@@ -6,7 +6,6 @@ import {
   Patch,
   Param,
   Delete,
-  Query,
   UseGuards,
   Req,
 } from '@nestjs/common';
@@ -34,10 +33,10 @@ export class PostsController {
     return this.postsService.findAll();
   }
 
-  @Get('search')
-  findOneByField(@Query('field') field: string, @Query('value') value: string) {
-    return this.postsService.findOneByField(field, value);
-  }
+  // @Get('search')
+  // findOneByField(@Query('field') field: string, @Query('value') value: string) {
+  //   return this.postsService.findOneByField(field, value);
+  // }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
@@ -62,21 +61,5 @@ export class PostsController {
   async remove(@Param('id') id: string, @Req() req: any) {
     const userId = req.user['sub'];
     return this.postsService.remove(id, userId);
-  }
-
-  @UseGuards(AccessTokenGuard)
-  @ApiBearerAuth()
-  @Post(':id/like')
-  async toggleLike(@Param('id') id: string, @Req() req: any) {
-    const userId = req.user['sub'];
-    return this.postsService.toggleLike(id, userId);
-  }
-
-  @UseGuards(AccessTokenGuard)
-  @ApiBearerAuth()
-  @Post(':id/dislike')
-  async toggleDislike(@Param('id') id: string, @Req() req: any) {
-    const userId = req.user['sub'];
-    return this.postsService.toggleDislike(id, userId);
   }
 }

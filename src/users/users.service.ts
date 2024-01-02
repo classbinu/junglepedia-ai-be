@@ -1,33 +1,45 @@
 import { CreateUserDto } from './dto/create-user.dto';
+import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UsersMongoRepository } from './users.repository';
+import { User } from './entities/user.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly usersRepository: UsersMongoRepository) {}
+  constructor(
+    @InjectRepository(User) private readonly usersRepository: Repository<User>,
+  ) {}
 
-  async create(createUserDto: CreateUserDto) {
-    return await this.usersRepository.create(createUserDto);
+  async create(createUserDto: CreateUserDto): Promise<User> {
+    const newUser = this.usersRepository.create(createUserDto);
+    return await this.usersRepository.save(newUser);
   }
 
-  async findAll() {
-    return await this.usersRepository.findAll();
+  async findAll(): Promise<User[]> {
+    return await this.usersRepository.find();
   }
 
-  async findOne(id: string) {
-    return await this.usersRepository.findOne(id);
+  async findOne(id: string): Promise<User | undefined> {
+    return await this.usersRepository.findOne({ where: { id } });
   }
 
-  async findOneByField(field: string, value: string) {
-    return await this.usersRepository.findOneByField(field, value);
+  async findOneByField(
+    field: keyof User,
+    value: string,
+  ): Promise<User | undefined> {
+    return await this.usersRepository.findOne({ where: { [field]: value } });
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto) {
-    return await this.usersRepository.update(id, updateUserDto);
+  async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
+    await this.usersRepository.update(id, updateUserDto);
+    return this.usersRepository.findOne({ where: { id } });
   }
 
-  async remove(id: string) {
-    return await this.usersRepository.remove(id);
+  async remove(id: string): Promise<void> {
+    const user = await this.usersRepository.findOne({ where: { id } });
+    if (user) {
+      await this.usersRepository.remove(user);
+    }
   }
 }
