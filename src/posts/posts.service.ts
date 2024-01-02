@@ -43,7 +43,10 @@ export class PostsService {
   }
 
   async findOne(id: string): Promise<Post | undefined> {
-    const post = await this.postsRepository.findOne({ where: { id: id } });
+    const post = await this.postsRepository.findOne({
+      where: { id: id },
+      relations: ['author'],
+    });
     if (!post) {
       throw new NotFoundException('Post not found');
     }
