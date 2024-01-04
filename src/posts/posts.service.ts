@@ -42,29 +42,31 @@ export class PostsService {
     hash.update(createPostDto.content);
     newPost.hash = hash.digest('hex');
 
+    const createdPost = await this.postsRepository.save(newPost);
+
     const isAskAI = true;
     if (isAskAI) {
-      const langchainDto = {
-        messages: createPostDto.content,
-      };
-
-      const res = await this.langchainService.post(langchainDto);
-      const AIMessage = res.lc_kwargs.content;
-
-      const createdPost = await this.postsRepository.save(newPost);
-
-      const createCommentDto = {
-        content: AIMessage,
-        postId: createdPost.id,
-      };
-      await this.commentsService.create(
-        createCommentDto,
-        '70f043a5-e51e-4743-a62e-2e65a166cf38', // AI user id
-      );
-      return;
+      await this.createAiFeedbackComment(createdPost);
     }
 
-    return await this.postsRepository.save(newPost);
+    return createdPost;
+  }
+
+  async createAiFeedbackComment(createdPost: any): Promise<Comment> {
+    const langchainDto = {
+      messages: createdPost.content,
+    };
+
+    const res = await this.langchainService.post(langchainDto);
+    const AiMessage = res.lc_kwargs.content;
+
+    const createCommentDto = {
+      content: AiMessage,
+      postId: createdPost.id,
+    };
+
+    const aiUserId = '70f043a5-e51e-4743-a62e-2e65a166cf38'; // 현재 임시. AI user id
+    return await this.commentsService.create(createCommentDto, aiUserId);
   }
 
   async findAll(): Promise<Post[]> {
