@@ -1,6 +1,7 @@
 import { AuthModule } from './auth/auth.module';
 import { CommentsModule } from './comments/comments.module';
 import { ConfigModule } from '@nestjs/config';
+import { LangchainModule } from './langchain/langchain.module';
 import { Module } from '@nestjs/common';
 import { PostsModule } from './posts/posts.module';
 import { TypeOrmConfigService } from './typeorm.config';
@@ -21,6 +22,7 @@ console.log('env : ' + process.env.NODE_ENV);
     AuthModule,
     PostsModule,
     CommentsModule,
+    LangchainModule,
   ],
   controllers: [],
   providers: [],

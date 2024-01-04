@@ -8,7 +8,7 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('api', app, document);
-
-  await app.listen(3000);
+  app.enableCors(); // 우선 전체 허용
+  await app.listen(3009);
 }
 bootstrap();

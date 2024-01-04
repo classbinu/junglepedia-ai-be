@@ -43,6 +43,11 @@ export class PostsController {
     return this.postsService.findOne(id);
   }
 
+  @Get(':id/comments')
+  findCommentsByPostId(@Param('id') id: string) {
+    return this.postsService.findCommentsByPostId(id);
+  }
+
   @UseGuards(AccessTokenGuard)
   @ApiBearerAuth()
   @Patch(':id')

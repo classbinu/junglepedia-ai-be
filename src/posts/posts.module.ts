@@ -1,4 +1,9 @@
 import { AuthModule } from 'src/auth/auth.module';
+import { Comment } from 'src/comments/entities/Comment.entity';
+import { CommentsModule } from 'src/comments/comments.module';
+import { CommentsService } from 'src/comments/comments.service';
+import { LangchainModule } from 'src/langchain/langchain.module';
+import { LangchainService } from 'src/langchain/langchain.service';
 import { Module } from '@nestjs/common';
 import { Post } from './entities/post.entity';
 import { PostsController } from './posts.controller';
@@ -10,10 +15,13 @@ import { User } from 'src/users/entities/user.entity';
   imports: [
     TypeOrmModule.forFeature([Post]),
     TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([Comment]),
     AuthModule,
+    CommentsModule,
+    LangchainModule,
   ],
   controllers: [PostsController],
-  providers: [PostsService],
+  providers: [PostsService, CommentsService, LangchainService],
   exports: [TypeOrmModule],
 })
 export class PostsModule {}

@@ -10,14 +10,21 @@ import { Repository } from 'typeorm';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
+import { Comment } from 'src/comments/entities/Comment.entity';
+import { LangchainService } from 'src/langchain/langchain.service';
+import { CommentsService } from 'src/comments/comments.service';
 
 @Injectable()
 export class PostsService {
   constructor(
     @InjectRepository(Post)
     private readonly postsRepository: Repository<Post>,
+    @InjectRepository(Comment)
+    private readonly commentsRepository: Repository<Comment>,
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
+    private readonly commentsService: CommentsService,
+    private readonly langchainService: LangchainService,
   ) {}
 
   async create(createPostDto: CreatePostDto, userId: string): Promise<Post> {
@@ -35,6 +42,28 @@ export class PostsService {
     hash.update(createPostDto.content);
     newPost.hash = hash.digest('hex');
 
+    const isAskAI = true;
+    if (isAskAI) {
+      const langchainDto = {
+        messages: createPostDto.content,
+      };
+
+      const res = await this.langchainService.post(langchainDto);
+      const AIMessage = res.lc_kwargs.content;
+
+      const createdPost = await this.postsRepository.save(newPost);
+
+      const createCommentDto = {
+        content: AIMessage,
+        postId: createdPost.id,
+      };
+      await this.commentsService.create(
+        createCommentDto,
+        '70f043a5-e51e-4743-a62e-2e65a166cf38', // AI user id
+      );
+      return;
+    }
+
     return await this.postsRepository.save(newPost);
   }
 
@@ -51,6 +80,15 @@ export class PostsService {
       throw new NotFoundException('Post not found');
     }
     return post;
+  }
+
+  async findCommentsByPostId(id: string): Promise<Comment[]> {
+    const comments = await this.commentsRepository.find({
+      where: { post: { id: id } },
+      relations: ['author'],
+    });
+
+    return comments;
   }
 
   async update(
@@ -91,7 +129,7 @@ export class PostsService {
       throw new NotFoundException('Post not found');
     }
 
-    if (userId !== post.author.toString()) {
+    if (userId !== post.author.id) {
       throw new UnauthorizedException(
         'You are not allowed to delete this post',
       );
