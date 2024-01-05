@@ -53,8 +53,17 @@ export class PostsService {
   }
 
   async createAiFeedbackComment(createdPost: any): Promise<Comment> {
+    const questionSet = `
+    """
+    면접 질문: ${createdPost.title}
+    """ 
+
+    """
+    면접 답변: ${createdPost.content}
+    """}
+    `;
     const langchainDto = {
-      messages: createdPost.content,
+      messages: questionSet,
     };
 
     const res = await this.langchainService.post(langchainDto);
@@ -70,7 +79,11 @@ export class PostsService {
   }
 
   async findAll(): Promise<Post[]> {
-    return await this.postsRepository.find();
+    return await this.postsRepository.find({
+      order: {
+        createdAt: -1,
+      },
+    });
   }
 
   async findOne(id: string): Promise<Post | undefined> {
