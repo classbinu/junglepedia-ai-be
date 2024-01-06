@@ -78,11 +78,30 @@ export class PostsService {
     return await this.commentsService.create(createCommentDto, aiUserId);
   }
 
-  async findAll(): Promise<Post[]> {
+  async findAll(offset: number = 0, limit: number = 20): Promise<Post[]> {
     return await this.postsRepository.find({
       order: {
         createdAt: -1,
       },
+      skip: offset,
+      take: limit,
+    });
+  }
+
+  async findMy(
+    userId: string,
+    offset: number = 0,
+    limit: number = 20,
+  ): Promise<Post[]> {
+    return await this.postsRepository.find({
+      where: {
+        author: { id: userId },
+      },
+      order: {
+        createdAt: -1,
+      },
+      skip: offset,
+      take: limit,
     });
   }
 
@@ -101,6 +120,7 @@ export class PostsService {
     const comments = await this.commentsRepository.find({
       where: { post: { id: id } },
       relations: ['author'],
+      order: { createdAt: 1 },
     });
 
     return comments;

@@ -8,11 +8,13 @@ import {
   Delete,
   UseGuards,
   Req,
+  Query,
+  Optional,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { AccessTokenGuard } from 'src/auth/guards/accessToken.guard';
 
 @ApiTags('Posts')
@@ -28,9 +30,44 @@ export class PostsController {
     return this.postsService.create(createPostDto, userId);
   }
 
+  @ApiQuery({
+    name: 'offset',
+    required: false,
+    type: Number,
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+  })
   @Get()
-  findAll() {
-    return this.postsService.findAll();
+  findAll(
+    @Query('offset') @Optional() offset?: number,
+    @Query('limit') @Optional() limit?: number,
+  ) {
+    return this.postsService.findAll(offset, limit);
+  }
+
+  @UseGuards(AccessTokenGuard)
+  @ApiBearerAuth()
+  @ApiQuery({
+    name: 'offset',
+    required: false,
+    type: Number,
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+  })
+  @Get('/my')
+  findMy(
+    @Req() req: any,
+    @Query('offset') @Optional() offset?: number,
+    @Query('limit') @Optional() limit?: number,
+  ) {
+    const userId = req.user['sub'];
+    return this.postsService.findMy(userId, offset, limit);
   }
 
   // @Get('search')
