@@ -14,6 +14,7 @@ import { AuthDto } from './dto/auth.dto';
 import { Request } from 'express';
 import { RefreshTokenGuard } from './guards/refreshToken.guard';
 import { AccessTokenGuard } from './guards/accessToken.guard';
+import { UpdateAuthDto } from './dto/update-auth.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -50,7 +51,13 @@ export class AuthController {
   @UseGuards(AccessTokenGuard)
   @ApiBearerAuth()
   @Patch('password')
-  async changePassword(@Body() passwordDto, @Req() req: Request) {
-    return await this.authService.changePassword(req.user['sub'], passwordDto);
+  async changePassword(
+    @Body() updateAuthDto: UpdateAuthDto,
+    @Req() req: Request,
+  ) {
+    return await this.authService.changePassword(
+      req.user['sub'],
+      updateAuthDto,
+    );
   }
 }

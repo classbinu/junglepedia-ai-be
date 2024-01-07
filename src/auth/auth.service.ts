@@ -5,6 +5,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { AuthDto } from './dto/auth.dto';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { UpdateAuthDto } from './dto/update-auth.dto';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()
@@ -56,18 +57,31 @@ export class AuthService {
     await this.usersService.update(userId, { refreshToken: null });
   }
 
-  async changePassword(userId: string, password: string) {
+  async changePassword(userId: string, updateAuthDto: UpdateAuthDto) {
     const user = await this.usersService.findOne(userId);
     if (!user) {
       throw new UnauthorizedException('User not found');
     }
 
-    const passwordMatches = await argon2.verify(user.password, password);
-    if (!passwordMatches) {
-      throw new UnauthorizedException('New password must be different');
+    const checkOldpassword = await argon2.verify(
+      user.password,
+      updateAuthDto.oldPassword,
+    );
+    if (!checkOldpassword) {
+      throw new UnauthorizedException('현재 비밀번호가 맞지 않습니다.');
     }
 
-    const hashedPassword = await this.hashData(password);
+    // const cheackNewPassword = await argon2.verify(
+    //   user.password,
+    //   updateAuthDto.newPassword,
+    // );
+    // if (cheackNewPassword) {
+    //   throw new UnauthorizedException(
+    //     '기존 비밀번호와 새로운 비밀번호가 일치합니다.',
+    //   );
+    // }
+
+    const hashedPassword = await this.hashData(updateAuthDto.newPassword);
     await this.usersService.update(userId, { password: hashedPassword });
     return { message: 'Password changed successfully' };
   }

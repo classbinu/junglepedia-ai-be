@@ -11,5 +11,13 @@ export class UpdateUserDto {
 
   @IsString()
   @IsOptional()
+  type?: number;
+
+  @IsString()
+  @IsOptional()
+  avatar?: string;
+
+  @IsString()
+  @IsOptional()
   refreshToken?: string | null;
 }
