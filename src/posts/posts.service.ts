@@ -136,12 +136,12 @@ export class PostsService {
       throw new NotFoundException(`User with ID ${userId} not found`);
     }
 
-    const post = await this.postsRepository.findOne({ where: { id: id } });
+    const post = await this.findOne(id);
     if (!post) {
       throw new NotFoundException('Post not found');
     }
 
-    if (userId !== post.author.toString()) {
+    if (userId !== post.author.id) {
       throw new UnauthorizedException(
         'You are not allowed to update this post',
       );
