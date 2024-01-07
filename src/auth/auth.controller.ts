@@ -40,7 +40,7 @@ export class AuthController {
 
   @UseGuards(RefreshTokenGuard)
   @ApiBearerAuth()
-  @Get('refresh')
+  @Post('refresh')
   async refreshTokens(@Req() req: Request) {
     const userId = req.user['sub'];
     const refreshToken = req.user['refreshToken'];
