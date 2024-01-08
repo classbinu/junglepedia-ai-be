@@ -204,9 +204,15 @@ export class PostsService {
       where: { post: { id: id }, user: { id: userId } },
     });
 
+    const likesCount = await this.postLikeRepository.count({
+      where: { post: { id: id } },
+    });
+
     if (like) {
+      await this.update(id, { likesCount: likesCount - 1 }, userId);
       return await this.postLikeRepository.remove(like);
     } else {
+      await this.update(id, { likesCount: likesCount + 1 }, userId);
       const newLike = this.postLikeRepository.create({
         user: user,
         post: post,

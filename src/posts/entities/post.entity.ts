@@ -26,6 +26,9 @@ export class Post {
   @ManyToOne(() => User)
   author: User;
 
+  @Column({ default: 0 })
+  likesCount: number;
+
   @CreateDateColumn()
   createdAt: Date;
 
