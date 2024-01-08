@@ -31,6 +31,11 @@ export class PostsController {
   }
 
   @ApiQuery({
+    name: 'author',
+    required: false,
+    type: String,
+  })
+  @ApiQuery({
     name: 'offset',
     required: false,
     type: Number,
@@ -110,5 +115,13 @@ export class PostsController {
   async remove(@Param('id') id: string, @Req() req: any) {
     const userId = req.user['sub'];
     return this.postsService.remove(id, userId);
+  }
+
+  @UseGuards(AccessTokenGuard)
+  @ApiBearerAuth()
+  @Post(':id/like')
+  async like(@Param('id') id: string, @Req() req: any) {
+    const userId = req.user['sub'];
+    return this.postsService.like(id, userId);
   }
 }
