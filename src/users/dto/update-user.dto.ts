@@ -11,11 +11,15 @@ export class UpdateUserDto {
 
   @IsString()
   @IsOptional()
-  type?: number;
+  intro?: string;
 
   @IsString()
   @IsOptional()
   avatar?: string;
+
+  @IsString()
+  @IsOptional()
+  type?: number;
 
   @IsString()
   @IsOptional()

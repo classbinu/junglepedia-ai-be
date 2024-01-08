@@ -19,11 +19,14 @@ export class User {
   @Column({ nullable: true })
   nickname: string | null;
 
-  @Column({ default: 1 })
-  type: number;
+  @Column({ nullable: true })
+  intro: string | null;
 
   @Column({ nullable: true })
   avatar: string | null;
+
+  @Column({ default: 1 })
+  type: number;
 
   @Column({ nullable: true })
   refreshToken: string | null;

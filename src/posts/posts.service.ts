@@ -79,14 +79,20 @@ export class PostsService {
   }
 
   async findAll(
+    author: string | null,
     offset: number = 0,
     limit: number = 20,
     isPrivate = false,
   ): Promise<Post[]> {
+    const whereCondition = {
+      isPrivate: isPrivate,
+    };
+
+    if (author) {
+      whereCondition['author'] = { id: author };
+    }
     return await this.postsRepository.find({
-      where: {
-        isPrivate: isPrivate,
-      },
+      where: whereCondition,
       order: {
         createdAt: -1,
       },

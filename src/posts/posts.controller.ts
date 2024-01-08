@@ -47,11 +47,12 @@ export class PostsController {
   })
   @Get()
   findAll(
+    @Query('author') @Optional() author?: string | null,
     @Query('offset') @Optional() offset?: number,
     @Query('limit') @Optional() limit?: number,
     @Query('isPrivate') @Optional() isPrivate?: boolean,
   ) {
-    return this.postsService.findAll(offset, limit, isPrivate);
+    return this.postsService.findAll(author, offset, limit, isPrivate);
   }
 
   @UseGuards(AccessTokenGuard)
