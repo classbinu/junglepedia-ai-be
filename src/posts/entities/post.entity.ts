@@ -14,6 +14,9 @@ export class Post {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({ default: false })
+  isPrivate: boolean;
+
   @Column()
   title: string;
 

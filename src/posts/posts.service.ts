@@ -78,8 +78,15 @@ export class PostsService {
     return await this.commentsService.create(createCommentDto, aiUserId);
   }
 
-  async findAll(offset: number = 0, limit: number = 20): Promise<Post[]> {
+  async findAll(
+    offset: number = 0,
+    limit: number = 20,
+    isPrivate = false,
+  ): Promise<Post[]> {
     return await this.postsRepository.find({
+      where: {
+        isPrivate: isPrivate,
+      },
       order: {
         createdAt: -1,
       },

@@ -40,12 +40,18 @@ export class PostsController {
     required: false,
     type: Number,
   })
+  @ApiQuery({
+    name: 'isPrivate',
+    required: false,
+    type: Boolean,
+  })
   @Get()
   findAll(
     @Query('offset') @Optional() offset?: number,
     @Query('limit') @Optional() limit?: number,
+    @Query('isPrivate') @Optional() isPrivate?: boolean,
   ) {
-    return this.postsService.findAll(offset, limit);
+    return this.postsService.findAll(offset, limit, isPrivate);
   }
 
   @UseGuards(AccessTokenGuard)
