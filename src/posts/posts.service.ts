@@ -14,6 +14,7 @@ import { User } from 'src/users/entities/user.entity';
 import { Comment } from 'src/comments/entities/Comment.entity';
 import { LangchainService } from 'src/langchain/langchain.service';
 import { CommentsService } from 'src/comments/comments.service';
+import { PostDislike } from './entities/postDislike.entity';
 
 @Injectable()
 export class PostsService {
@@ -26,6 +27,9 @@ export class PostsService {
     private readonly usersRepository: Repository<User>,
     @InjectRepository(PostLike)
     private readonly postLikeRepository: Repository<PostLike>,
+    @InjectRepository(PostDislike)
+    private readonly postDislikeRepository: Repository<PostDislike>,
+
     private readonly commentsService: CommentsService,
     private readonly langchainService: LangchainService,
   ) {}
@@ -218,6 +222,38 @@ export class PostsService {
         post: post,
       });
       return await this.postLikeRepository.save(newLike);
+    }
+  }
+
+  async dislike(id: string, userId: string): Promise<PostLike> {
+    const post = await this.findOne(id);
+    if (!post) {
+      throw new NotFoundException('Post not found');
+    }
+
+    const user = await this.usersRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+
+    const dislike = await this.postDislikeRepository.findOne({
+      where: { post: { id: id }, user: { id: userId } },
+    });
+
+    const dislikesCount = await this.postDislikeRepository.count({
+      where: { post: { id: id } },
+    });
+
+    if (dislike) {
+      await this.update(id, { dislikesCount: dislikesCount - 1 }, userId);
+      return await this.postDislikeRepository.remove(dislike);
+    } else {
+      await this.update(id, { dislikesCount: dislikesCount + 1 }, userId);
+      const newDisLike = this.postDislikeRepository.create({
+        user: user,
+        post: post,
+      });
+      return await this.postDislikeRepository.save(newDisLike);
     }
   }
 }

@@ -6,6 +6,7 @@ import { LangchainModule } from 'src/langchain/langchain.module';
 import { LangchainService } from 'src/langchain/langchain.service';
 import { Module } from '@nestjs/common';
 import { Post } from './entities/post.entity';
+import { PostDislike } from './entities/postDislike.entity';
 import { PostLike } from './entities/postLike.entity';
 import { PostsController } from './posts.controller';
 import { PostsService } from './posts.service';
@@ -14,7 +15,7 @@ import { User } from 'src/users/entities/user.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Post, User, Comment, PostLike]),
+    TypeOrmModule.forFeature([Post, User, Comment, PostLike, PostDislike]),
     AuthModule,
     CommentsModule,
     LangchainModule,

@@ -124,4 +124,12 @@ export class PostsController {
     const userId = req.user['sub'];
     return this.postsService.like(id, userId);
   }
+
+  @UseGuards(AccessTokenGuard)
+  @ApiBearerAuth()
+  @Post(':id/dislike')
+  async dislike(@Param('id') id: string, @Req() req: any) {
+    const userId = req.user['sub'];
+    return this.postsService.dislike(id, userId);
+  }
 }
