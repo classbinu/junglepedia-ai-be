@@ -4,5 +4,8 @@ import { PartialType } from '@nestjs/swagger';
 
 export class UpdatePostDto extends PartialType(CreatePostDto) {
   @IsNumber()
-  likesCount: number;
+  likesCount?: number;
+
+  @IsNumber()
+  dislikesCount?: number;
 }
