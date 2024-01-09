@@ -13,7 +13,8 @@ export class AccessTokenStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor() {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: process.env.JWT_ACCESS_TOKEN_SECRET,
+      // secretOrKey: process.env.JWT_ACCESS_TOKEN_SECRET,
+      secretOrKey: 'docker_test_secret',
     });
   }
 
