@@ -13,7 +13,7 @@ import { CommentsService } from './comments.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { AccessTokenGuard } from 'src/auth/guards/accessToken.guard';
+import { AccessTokenGuard } from '../auth/guards/accessToken.guard';
 
 @ApiTags('Comments')
 @Controller('comments')

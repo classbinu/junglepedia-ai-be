@@ -15,7 +15,7 @@ import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
-import { AccessTokenGuard } from 'src/auth/guards/accessToken.guard';
+import { AccessTokenGuard } from '../auth/guards/accessToken.guard';
 
 @ApiTags('Posts')
 @Controller('posts')

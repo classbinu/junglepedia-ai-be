@@ -8,8 +8,8 @@ import { Comment } from './entities/comment.entity';
 import { Repository } from 'typeorm';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/users/entities/user.entity';
-import { Post } from 'src/posts/entities/post.entity';
+import { User } from '../users/entities/user.entity';
+import { Post } from '../posts/entities/post.entity';
 
 @Injectable()
 export class CommentsService {

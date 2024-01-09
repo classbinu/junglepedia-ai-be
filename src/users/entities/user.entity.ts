@@ -11,7 +11,7 @@ import {
 @Unique(['nickname'])
 export class User {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id?: string;
 
   @Column()
   email: string;
@@ -20,20 +20,20 @@ export class User {
   password: string;
 
   @Column({ nullable: true })
-  nickname: string | null;
+  nickname?: string | null;
 
   @Column({ nullable: true })
-  intro: string | null;
+  intro?: string | null;
 
   @Column({ nullable: true })
-  avatar: string | null;
+  avatar?: string | null;
 
   @Column({ default: 1 })
-  type: number;
+  type?: number;
 
   @Column({ nullable: true })
-  refreshToken: string | null;
+  refreshToken?: string | null;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt?: Date;
 }

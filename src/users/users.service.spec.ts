@@ -1,13 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { UsersMongoRepository } from './users.repository';
+import { Repository } from 'typeorm';
+import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
-const mockUsersMongoRepository = {
+const mockUsersRepository = {
   create: jest.fn((dto) => {
     return { _id: 1, ...dto };
   }),
-  findAll: jest.fn(() => {
+  find: jest.fn(() => {
     return [
       { _id: 1, email: 'test1@gmail.com', password: 'password123' },
       { _id: 2, email: 'test2@gmail.com', password: 'password456' },
@@ -27,18 +29,21 @@ const mockUsersMongoRepository = {
 
 describe('UsersService', () => {
   let service: UsersService;
-  let repository: UsersMongoRepository;
+  let repository: Repository<User>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UsersService,
-        { provide: UsersMongoRepository, useValue: mockUsersMongoRepository },
+        {
+          provide: getRepositoryToken(User),
+          useValue: mockUsersRepository,
+        },
       ],
     }).compile();
 
     service = module.get<UsersService>(UsersService);
-    repository = module.get<UsersMongoRepository>(UsersMongoRepository);
+    repository = module.get<Repository<User>>(getRepositoryToken(User));
   });
 
   it('should be defined', () => {
@@ -47,7 +52,7 @@ describe('UsersService', () => {
 
   it('should create a user', async () => {
     const createUserDto = {
-      _id: 1,
+      id: 1,
       email: 'test1@gmail.com',
       password: 'password123',
     };
@@ -59,13 +64,13 @@ describe('UsersService', () => {
 
   it('should find all users', async () => {
     const usersArray = [
-      { _id: 1, email: 'test1@gmail.com', password: 'password123' },
-      { _id: 2, email: 'test2@gmail.com', password: 'password456' },
-      { _id: 3, email: 'test3@gmail.com', password: 'password789' },
+      { id: 1, email: 'test1@gmail.com', password: 'password123' },
+      { id: 2, email: 'test2@gmail.com', password: 'password456' },
+      { id: 3, email: 'test3@gmail.com', password: 'password789' },
     ];
 
     const result = await service.findAll();
-    expect(repository.findAll).toHaveBeenCalled();
+    expect(repository.find).toHaveBeenCalled();
     expect(result).toEqual(usersArray);
   });
 
@@ -73,7 +78,7 @@ describe('UsersService', () => {
     const result = await service.findOne('1');
     expect(repository.findOne).toHaveBeenCalledWith('1');
     expect(result).toEqual({
-      _id: '1',
+      id: '1',
       email: 'test1@gmail.com',
       password: 'password123',
     });

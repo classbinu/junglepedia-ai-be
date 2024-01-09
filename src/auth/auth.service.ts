@@ -6,7 +6,7 @@ import { AuthDto } from './dto/auth.dto';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { UpdateAuthDto } from './dto/update-auth.dto';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class AuthService {
@@ -35,6 +35,7 @@ export class AuthService {
       user.password,
       authDto.password,
     );
+
     if (!isPasswordValid) {
       throw new UnauthorizedException('Wrong password');
     }

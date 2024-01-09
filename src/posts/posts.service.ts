@@ -10,10 +10,10 @@ import { PostLike } from './entities/postLike.entity';
 import { Repository } from 'typeorm';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/users/entities/user.entity';
-import { Comment } from 'src/comments/entities/Comment.entity';
-import { LangchainService } from 'src/langchain/langchain.service';
-import { CommentsService } from 'src/comments/comments.service';
+import { User } from '../users/entities/user.entity';
+import { Comment } from '../comments/entities/comment.entity';
+import { LangchainService } from '../langchain/langchain.service';
+import { CommentsService } from '../comments/comments.service';
 import { PostDislike } from './entities/postDislike.entity';
 
 @Injectable()
