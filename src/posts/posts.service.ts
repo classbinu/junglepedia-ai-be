@@ -81,7 +81,7 @@ export class PostsService {
       postId: createdPost.id,
     };
 
-    const aiUserId = '70f043a5-e51e-4743-a62e-2e65a166cf38'; // 현재 임시. AI user id
+    const aiUserId = 'c9ccb6ec-73e3-43c8-bc91-fbe2cb249d2b'; // 현재 임시. AI user id
     return await this.commentsService.create(createCommentDto, aiUserId);
   }
 
@@ -225,10 +225,10 @@ export class PostsService {
     });
 
     if (like) {
-      await this.update(id, { likesCount: likesCount - 1 }, userId);
+      await this.postsRepository.update(id, { likesCount: likesCount - 1 });
       return await this.postLikeRepository.remove(like);
     } else {
-      await this.update(id, { likesCount: likesCount + 1 }, userId);
+      await this.postsRepository.update(id, { likesCount: likesCount + 1 });
       const newLike = this.postLikeRepository.create({
         user: user,
         post: post,
@@ -269,10 +269,14 @@ export class PostsService {
     });
 
     if (dislike) {
-      await this.update(id, { dislikesCount: dislikesCount - 1 }, userId);
+      await this.postsRepository.update(id, {
+        dislikesCount: dislikesCount - 1,
+      });
       return await this.postDislikeRepository.remove(dislike);
     } else {
-      await this.update(id, { dislikesCount: dislikesCount + 1 }, userId);
+      await this.postsRepository.update(id, {
+        dislikesCount: dislikesCount + 1,
+      });
       const newDisLike = this.postDislikeRepository.create({
         user: user,
         post: post,

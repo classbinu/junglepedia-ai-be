@@ -1,6 +1,10 @@
 import { CreateUserDto } from './dto/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
@@ -12,8 +16,15 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const newUser = this.usersRepository.create(createUserDto);
-    return await this.usersRepository.save(newUser);
+    try {
+      const newUser = this.usersRepository.create(createUserDto);
+      return await this.usersRepository.save(newUser);
+    } catch (error) {
+      if (error.code === '23505') {
+        throw new ConflictException('이미 존재하는 이메일입니다.');
+      }
+      throw new InternalServerErrorException();
+    }
   }
 
   async findAll(): Promise<User[]> {
