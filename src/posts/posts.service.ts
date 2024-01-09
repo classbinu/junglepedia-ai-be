@@ -193,7 +193,19 @@ export class PostsService {
     await this.postsRepository.remove(post);
   }
 
-  async like(id: string, userId: string): Promise<PostLike> {
+  async getLikes(id: string): Promise<PostLike[]> {
+    const post = await this.findOne(id);
+    if (!post) {
+      throw new NotFoundException('Post not found');
+    }
+
+    return await this.postLikeRepository.find({
+      where: { post: { id: id } },
+      relations: ['user'],
+    });
+  }
+
+  async toggleLike(id: string, userId: string): Promise<PostLike> {
     const post = await this.findOne(id);
     if (!post) {
       throw new NotFoundException('Post not found');
@@ -225,7 +237,19 @@ export class PostsService {
     }
   }
 
-  async dislike(id: string, userId: string): Promise<PostLike> {
+  async getDislikes(id: string): Promise<PostDislike[]> {
+    const post = await this.findOne(id);
+    if (!post) {
+      throw new NotFoundException('Post not found');
+    }
+
+    return await this.postDislikeRepository.find({
+      where: { post: { id: id } },
+      relations: ['user'],
+    });
+  }
+
+  async toggleDislike(id: string, userId: string): Promise<PostLike> {
     const post = await this.findOne(id);
     if (!post) {
       throw new NotFoundException('Post not found');

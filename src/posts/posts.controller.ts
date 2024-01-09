@@ -117,19 +117,31 @@ export class PostsController {
     return this.postsService.remove(id, userId);
   }
 
+  @ApiBearerAuth()
+  @Get(':id/like')
+  async getLikes(@Param('id') id: string) {
+    return this.postsService.getLikes(id);
+  }
+
   @UseGuards(AccessTokenGuard)
   @ApiBearerAuth()
   @Post(':id/like')
-  async like(@Param('id') id: string, @Req() req: any) {
+  async toggleLike(@Param('id') id: string, @Req() req: any) {
     const userId = req.user['sub'];
-    return this.postsService.like(id, userId);
+    return this.postsService.toggleLike(id, userId);
+  }
+
+  @ApiBearerAuth()
+  @Get(':id/dislike')
+  async getDislikes(@Param('id') id: string) {
+    return this.postsService.getDislikes(id);
   }
 
   @UseGuards(AccessTokenGuard)
   @ApiBearerAuth()
   @Post(':id/dislike')
-  async dislike(@Param('id') id: string, @Req() req: any) {
+  async toggleDislike(@Param('id') id: string, @Req() req: any) {
     const userId = req.user['sub'];
-    return this.postsService.dislike(id, userId);
+    return this.postsService.toggleDislike(id, userId);
   }
 }
