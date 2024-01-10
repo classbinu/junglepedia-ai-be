@@ -28,6 +28,7 @@ jobs:
   # 빌드 Job
   build:
     name: Build
+    needs: test
     runs-on: ubuntu-latest
     steps:
       # github repository에서 checkout
