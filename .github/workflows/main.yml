@@ -12,6 +12,19 @@ env:
   NAME: junglepedia_ai_be
 
 jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20' # 프로젝트에 맞는 Node.js 버전으로 설정
+      - name: Install dependencies
+        run: npm install
+      - name: Run Jest tests
+        run: npx jest users.controller.spec.ts
   # 빌드 Job
   build:
     name: Build
