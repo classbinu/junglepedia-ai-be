@@ -16,7 +16,7 @@ export class PostDislike {
   @ManyToOne(() => User)
   user: User;
 
-  @ManyToOne(() => Post)
+  @ManyToOne(() => Post, { onDelete: 'CASCADE' })
   post: Post;
 
   @CreateDateColumn()
