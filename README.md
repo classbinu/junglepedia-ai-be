@@ -9,7 +9,7 @@ AI 튜터에게 피드백을 받아 보세요
 개발기간: 2023/12/28 ~ 2024/01/10
 
 ## 프론트엔드 저장소
-- [https://github.com/classbinu/junglepedia-ai-fe]https://github.com/classbinu/junglepedia-ai-fe
+- [https://github.com/classbinu/junglepedia-ai-fe](https://github.com/classbinu/junglepedia-ai-fe)
 
 ## 기획 의도
 - 크래프톤 정글에서 매주 기술 쪽지 시험을 보면서 문답을 통한 학습의 효과를 느낌
